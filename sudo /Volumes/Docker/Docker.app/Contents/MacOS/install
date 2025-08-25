@@ -1,0 +1,2 @@
+sudo /Volumes/Docker/Docker.app/Contents/MacOS/install  
+sudo hdiutil detach /Volumes/Docker  
