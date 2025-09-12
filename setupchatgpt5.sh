@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -----------------------------
-# ChatGPT5 One-Command Setup
+# GPT5 One-Command Setup
 # -----------------------------
 
 # 1. Check Python installation
@@ -32,16 +32,16 @@ fi
 if [ ! -f ".env" ]; then
     echo "Creating default .env file..."
     cat <<EOL > .env
-GPT_API_KEY=your_api_key_here
+GPT_API_KEY=
 BACKEND_PORT=5000
-MEMORY_LIMIT=50
+MEMORY_LIMIT=1000000
 EOL
     echo ".env file created. Edit it with your GPT API key if needed."
 fi
 
 # 6. Start backend
-echo "Starting ChatGPT5 backend..."
-python3 ChatGPT5.py &
+echo "Starting GPT5 backend..."
+python3 GPT5.py &
 BACKEND_PID=$!
 
 # 7. Wait for backend to initialize
