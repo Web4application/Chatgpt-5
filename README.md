@@ -1,5 +1,5 @@
-```
-gpt5/
+```bash
+gptchatly/
 │
 ├── index.html                 # Homepage with hero, chatbot, animated characters
 ├── features.html              # Features page with auto-generated charts and infographics
