@@ -1,0 +1,1 @@
+// Placeholder: GenerativeModel.swift class
