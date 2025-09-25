@@ -36,3 +36,8 @@ docker run -it --rm \
 import (
 	"github.com/openai/openai-go/v2" // imported as openai
 )
+
+go get github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai
+
+# optional
+go get github.com/Azure/azure-sdk-for-go/sdk/azidentity
