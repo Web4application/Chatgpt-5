@@ -17,7 +17,7 @@ func main() {
 		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.UserMessage("Say this is a test"),
 		},
-		Model: openai.ChatModelGPT4o,
+		Model: openai.gpt-5,
 	})
 	if err != nil {
 		panic(err.Error())
