@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
 // Connect to the backend server
-const socket = io('http://localhost:4000'); // Change to your backend URL in production
+const socket = io('http://llama-31-70b-instruct.nim-service:8000/v1/chat/completions'); // Change to your backend URL in production
 
 const ChatApp = () => {
   const [message, setMessage] = useState('');
