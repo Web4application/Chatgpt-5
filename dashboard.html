@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Web4 App</title>
+<style>
+  html, body {
+    margin: 0; height: 100%; width: 100%;
+    background: linear-gradient(270deg, red, orange, yellow, green, blue, indigo, violet);
+    background-size: 1400% 1400%;
+    animation: rainbow 20s ease infinite;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+    perspective: 1000px;
+  }
+  @keyframes rainbow {0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  img {
+    width: 300px; margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px white);
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  @keyframes glow {from{filter: drop-shadow(0 0 10px white)}to{filter: drop-shadow(0 0 40px white)}}
+
+  #music-toggle {padding:12px 24px;background:rgba(0,0,0,0.5);color:white;border:none;cursor:pointer;font-size:16px;border-radius:6px;margin-bottom:20px;transition:0.3s;}
+  #music-toggle:hover {background: rgba(0,0,0,0.8);}
+  #titlebar {position:absolute; top:0; right:0; display:flex; background:rgba(0,0,0,0.3); -webkit-app-region: drag;}
+  .btn { -webkit-app-region:no-drag; padding:8px 16px; color:white; font-weight:bold; cursor:pointer; user-select:none; transition:0.2s;}
+  .btn:hover {background: rgba(255,255,255,0.2);}
+
+  #gpt5mini-container {
+    position: absolute; bottom:20px; width:450px; max-height:500px;
+    backdrop-filter: blur(25px); background: rgba(0,0,0,0.15);
+    border-radius:25px; border:2px solid rgba(255,255,255,0.3);
+    display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 25px rgba(255,255,255,0.2);
+    transform-style: preserve-3d;
+  }
+
+  #gpt5mini-box {
+    flex:1; padding:15px; overflow-y:auto; color:#00ffea; font-size:14px;
+    display:flex; flex-direction:column; gap:12px; perspective:1000px;
+  }
+
+  #gpt5mini-input-container {display:flex; border-top:1px solid rgba(255,255,255,0.2);}
+  #gpt5mini-input {flex:1; padding:12px; border:none; outline:none; background: rgba(0,0,0,0.25); color:#00ffea; font-size:14px; border-radius:0 0 0 25px;}
+  #gpt5mini-input::placeholder {color: rgba(0,255,234,0.5);}
+  #gpt5mini-send {width:90px; border:none; background:#00ffea; color:black; cursor:pointer; font-weight:bold; border-radius:0 0 25px 0; transition:0.2s;}
+  #gpt5mini-send:hover {background:#00ccab;}
+
+  .typing-cursor {display:inline-block; width:2px; background:#00ffea; animation:blink 0.7s infinite; margin-left:2px;}
+  @keyframes blink {0%,50%,100%{opacity:1}25%,75%{opacity:0}}
+
+  .holo-msg, .user-msg {
+    padding:10px 15px; border-radius:15px; opacity:0; transform: translateX(0) rotateY(0deg) translateZ(0px);
+    animation: holo-fade-3d 0.5s forwards; box-shadow: 0 0 10px rgba(0,255,234,0.5);
+    background: rgba(0,255,234,0.1); border:1px solid rgba(0,255,234,0.5);
+    transform-style: preserve-3d;
+  }
+  .user-msg {align-self:flex-end; background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.3); box-shadow:0 0 8px rgba(255,255,255,0.3);}
+  @keyframes holo-fade-3d {to{opacity:1; transform: translateX(0) rotateY(0deg) translateZ(0px);}}
+
+</style>
+</head>
+<body>
+  <div id="titlebar">
+    <div class="btn" id="min-btn">—</div>
+    <div class="btn" id="max-btn">☐</div>
+    <div class="btn" id="close-btn">✕</div>
+  </div>
+
+  <img src="web4.png" alt="Web4 Logo">
+  <audio id="bg-music" src="music.mp3" loop></audio>
+  <button id="music-toggle">Play Music</button>
+
+  <div id="gpt5mini-container">
+    <div id="gpt5mini-box"></div>
+    <div id="gpt5mini-input-container">
+      <input id="gpt5mini-input" type="text" placeholder="Ask GPT-5 Mini...">
+      <button id="gpt5mini-send">Send</button>
+    </div>
+  </div>
+
+  <audio id="type-sound" src="type.mp3"></audio>
+
+  <script>
+    const { remote } = require("electron");
+    const currentWindow = remote.getCurrentWindow();
+
+    document.getElementById("min-btn").addEventListener("click", ()=>currentWindow.minimize());
+    document.getElementById("max-btn").addEventListener("click", ()=>{
+      currentWindow.isMaximized()?currentWindow.unmaximize():currentWindow.maximize();
+    });
+    document.getElementById("close-btn").addEventListener("click", ()=>currentWindow.close());
+
+    const music=document.getElementById("bg-music"), toggle=document.getElementById("music-toggle");
+    toggle.addEventListener("click", ()=>{ music.paused? (music.play(), toggle.textContent="Pause Music") : (music.pause(), toggle.textContent="Play Music") });
+
+    const box=document.getElementById("gpt5mini-box"), input=document.getElementById("gpt5mini-input");
+    const send=document.getElementById("gpt5mini-send"), typeSound=document.getElementById("type-sound");
+
+    async function sendMessage(){
+      const msg=input.value.trim(); if(!msg) return;
+      const userDiv=document.createElement('div'); userDiv.classList.add('user-msg'); userDiv.textContent=msg;
+      box.appendChild(userDiv); input.value=''; box.scrollTop=box.scrollHeight;
+
+      try{
+        const res=await fetch("http://localhost:5000/chat",{method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({message:msg})});
+        const data=await res.json();
+        const gptDiv=document.createElement('div'); gptDiv.classList.add('holo-msg');
+        gptDiv.innerHTML=`<strong>GPT-5 Mini:</strong> <span></span><span class="typing-cursor"></span>`;
+        box.appendChild(gptDiv);
+        box.scrollTop=box.scrollHeight;
+
+        const text=data.reply, span=gptDiv.querySelector('span'), cursor=gptDiv.querySelector('.typing-cursor');
+        let i=0;
+        const interval=setInterval(()=>{
+          if(i<text.length){ span.textContent+=text[i]; typeSound.currentTime=0; typeSound.play(); i++; box.scrollTop=box.scrollHeight; }
+          else{ clearInterval(interval); cursor.remove(); }
+        },30);
+
+      }catch(err){
+        box.innerHTML+=`<div style="color:red;"><strong>Error:</strong> Could not reach GPT-5 Mini</div>`;
+      }
+    }
+    send.addEventListener("click",sendMessage);
+    input.addEventListener("keydown", e=>{ if(e.key==="Enter") sendMessage(); });
+
+    // Parallax floating
+    const container = document.getElementById('gpt5mini-box');
+    container.addEventListener('mousemove', e=>{
+      const x=(e.clientX/window.innerWidth-0.5)*30;
+      const y=(e.clientY/window.innerHeight-0.5)*30;
+      container.querySelectorAll('.holo-msg, .user-msg').forEach(msg=>{
+        msg.style.transform=`translateX(0px) translateY(0px) rotateY(${x}deg) rotateX(${-y}deg) translateZ(20px)`;
+      });
+    });
+    container.addEventListener('mouseleave', ()=>{
+      container.querySelectorAll('.holo-msg, .user-msg').forEach(msg=>{
+        msg.style.transform=`translateX(0px) rotateY(0deg) rotateX(0deg) translateZ(0px)`;
+      });
+    });
+  </script>
+</body>
+</html>
