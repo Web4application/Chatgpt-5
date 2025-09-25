@@ -32,3 +32,7 @@ docker run -it --rm \
     -u $(id -u) \
     -p 8000:8000 \
     nvcr.io/nim/meta/llama-3.1-70b-instruct:latest
+
+import (
+	"github.com/openai/openai-go/v2" // imported as openai
+)
