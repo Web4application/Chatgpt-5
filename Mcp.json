@@ -1,0 +1,41 @@
+curl https://api.openai.com/v1/responses \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -d '{
+  "model": "gpt-5 mini",
+  "input": [
+    {
+      "role": "developer",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "You are a research assistant that searches MCP servers to find answers to your questions."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "Are cats attached to their homes? Give a succinct one page overview."
+        }
+      ]
+    }
+  ],
+  "reasoning": {
+    "summary": "auto"
+  },
+  "tools": [
+    {
+      "type": "mcp",
+      "server_label": "cats",
+      "server_url": "https://777ff573-9947-4b9c-8982-658fa40c7d09-00-3le96u7wsymx.janeway.replit.dev/sse/",
+      "allowed_tools": [
+        "search",
+        "fetch"
+      ],
+      "require_approval": "never"
+    }
+  ]
+}'
