@@ -256,6 +256,7 @@ print(response.output_text)
 ```
 
 ```csharp
+
 using OpenAI.Files;
 using OpenAI.Responses;
 
@@ -374,6 +375,7 @@ print(response.output_text)
 ```
 
 ```csharp
+
 using OpenAI.Files;
 using OpenAI.Responses;
 
@@ -456,6 +458,7 @@ curl "https://api.openai.com/v1/responses" \
 ```
 
 ```csharp
+
 using OpenAI.Responses;
 
 string key = Environment.GetEnvironmentVariable("OPENAI_API_KEY")!;
@@ -780,6 +783,7 @@ Use server‑sent [streaming events](/docs/guides/streaming-responses) to show r
 Stream server-sent events from the API
 
 ```javascript
+
 import { OpenAI } from "openai";
 const client = new OpenAI();
 
@@ -819,6 +823,7 @@ for event in stream:
 ```
 
 ```csharp
+
 using OpenAI.Responses;
 
 string key = Environment.GetEnvironmentVariable("OPENAI_API_KEY")!;
@@ -861,6 +866,7 @@ Use the OpenAI platform to build [agents](/docs/guides/agents) capable of taking
 Build a language triage agent
 
 ```javascript
+
 import { Agent, run } from '@openai/agents';
 
 const spanishAgent = new Agent({
@@ -920,39 +926,3 @@ Learn how to use the OpenAI platform to build powerful, capable AI agents.
 
 ](/docs/guides/agents)
 
-```bash
-gptchatly/
-│
-├── index.html                 # Homepage with hero, chatbot, animated characters
-├── features.html              # Features page with auto-generated charts and infographics
-├── tools.html                 # AI Tools page (text, image, animation, voice)
-├── characters.html            # AI personas & adventure animations
-├── about.html                 # About page with narrative and optional voice narration
-├── contact.html               # Contact page with AI-assisted form (text & voice)
-├── blog.html                  # Blog page with AI-generated articles & interactive content
-│
-├── assets/                    # All images, illustrations, icons
-│   ├── images/
-│   ├── avatars/
-│   ├── animations/
-│
-├── css/                       # Stylesheets
-│   ├── main.css
-│   ├── animations.css
-│   └── responsive.css
-│
-├── js/                        # JavaScript files
-│   ├── main.js                 # Core interactivity & navigation
-│   ├── chatbot.js              # AI chatbot interface
-│   ├── tools.js                # Interactive AI tools logic
-│   ├── animations.js           # Adventure animations & character interactivity
-│   └── tts_stts.js             # Text-to-speech and speech-to-speech integration
-│
-├── data/                       # Optional JSON data for dynamic content
-│   ├── features.json
-│   ├── tools.json
-│   └── characters.json
-│
-├── fonts/                      # Custom fonts
-├── audio/                      # Auto-generated voice files (TTS/STTS)
-└── README.md                   # Instructions, AI prompt, and deployment guide
