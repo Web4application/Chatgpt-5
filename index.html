@@ -87,18 +87,24 @@ async function sendMessage(){
     const aiDiv = addMessage('AI is typing...','ai');
     try{
         const res = await fetch('/api/chat', {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({ message: txt })
-        });
-        if(!res.ok) throw new Error('Network error');
-        const data = await res.json();
-        aiDiv.textContent = 'AI: ' + data.reply;
-        speak(data.reply);
-    }catch(err){
-        aiDiv.textContent='src= server.js';
-        console.error(err);
-        speak('Sorry, I could not get a response.');
+            curl -X "POST" \
+ 'http://llama-31-70b-instruct.nim-service:8000/v1/chat/completions' \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "model": "meta/llama-3.1-70b-instruct",
+        "messages": [
+        {
+          "content":"What should I do for a 4 day vacation at Cape Hatteras National Seashore?",
+          "role": "user"
+        }],
+        "top_p": 1,
+        "n": 1,
+        "max_tokens": 1024,
+        "stream": false,
+        "frequency_penalty": 0.0,
+        "stop": ["STOP"]
+      }'
     }
 }
 
